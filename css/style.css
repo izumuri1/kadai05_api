@@ -1,0 +1,103 @@
+
+.montserrat-<uniquifier> {
+  font-family: "Montserrat", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: white;
+}
+
+h1 {
+  text-align: center;
+  margin: 10px 0;
+  font-size: 20px;
+  font-family: "Montserrat", sans-serif;
+  font-style:italic;
+}
+
+footer {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 3px;
+  display: block;
+  margin: 0 auto 5px;
+  box-shadow: 3px 1px 1px rgba(128, 128, 128, 0.368);
+  font-size: 12px;
+  background-color: floralwhite;
+  border: none;
+}
+
+label {
+  width: 100%;
+  margin: 0 auto 5px;
+  font-size: 12px;
+}
+
+textarea {
+  width: 100%;
+  height: 50px;
+  padding: 3px;
+  margin: 0 auto 5px;
+  display: block;
+  resize: none;
+  background-color:floralwhite;
+  box-shadow: 3px 1px 1px rgba(128, 128, 128, 0.368);
+  font-size: 12px;
+  border:none;
+}
+
+button {
+  width: 80px;
+  height: 25px;
+  margin: 0 auto 10px;
+  display: block;
+  font-size: 12px;
+  background-color: orange);
+  border-radius: 4px;
+  box-shadow: 3px 1px 1px rgba(128, 128, 128, 0.368);
+}
+
+button:hover {
+  background-color: lightgrey;
+  color: white;
+}
+
+.recordBlock{
+  display: flex;
+  justify-content: space-between; /* 両端に適切な余白を確保 */
+  width: 100%;
+}
+
+.recordBlock > div {
+  width: 49%; /* 各要素が画面の半分を占める */
+}
+
+.record1,
+.record2,
+.record3{
+  display: flex;
+  justify-content: space-between; /* 両端に適切な余白を確保 */
+  width: 100%;
+}
+
+.record1 > input,
+.record2 > textarea{
+    width: 33%;
+}
+
+.recordList{
+    padding-top: 20px;
+    border-top: gray;
+}

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>World Travel Record</title>
+</head>
+
+<body>
+
+<!-- タイトル -->
+<header>
+    <div>
+        <h1>World Travel Record</h1>
+    </div>
+</header>
+
+
+<!-- 地図 -->
+<main>
+    <div id="map" style="height: 300px; margin-bottom: 20px; box-shadow: 5px 2px 2px rgba(128, 128, 128, 0.368);">
+        <!-- ここに地図を表示 -->
+    </div>
+</main>
+
+
+<div>
+    <!-- 旅行レコード -->
+    <main>
+        <!-- 基礎情報：旅行先、同行者 -->
+        <div class="recordBlock">
+            <div>
+                <input id="country" type="text" placeholder="旅行した国">
+            </div>
+            <div>
+                <input id="travelBuddy" type="text" placeholder="同行者">
+            </div>
+        </div>
+        <!-- 旅行時期 -->
+        <div class="recordBlock">
+            <div>
+                <label for="departureDate">出発日</label>
+                <div>
+                    <input type="date" id="departureDate">
+                </div>
+            </div>
+            <div>
+                <label for="returnDate">帰国日</label>
+                <div>
+                    <input type="date" id="returnDate">
+                </div>
+            </div>
+        </div>
+        <!-- 詳細 -->
+        <div class="recordBlock">
+            <div>
+                <textarea name="" id="activity" placeholder="何をしたか"></textarea>
+            </div>
+            <div>
+                <textarea name="" id="review" placeholder="感想"></textarea>
+            </div>
+        </div>
+        <!-- レコード登録ボタン -->
+        <div>
+            <button id="register">登録</button>
+        </div>
+    </main>
+
+    <!-- レコード一覧表示 -->
+    <main>
+        <div class="recordList">
+            <!-- ここに登録したレコードを一覧で表示 -->
+        </div>
+    </main>
+
+
+    <footer>&copy; 2025 izumuri<br>
+        Leaflet | (c) 2010-2024 Vladimir Agafonkin and contributors,<br>
+        MIT Licensed.<br>
+        Map data from OpenStreetMap<br>
+        https://www.naturalearthdata.com/
+    </footer>
+
+</div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
