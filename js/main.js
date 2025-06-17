@@ -236,6 +236,7 @@ function drawCountriesWithVisit() {
         .then(geojson => {
     L.geoJSON(geojson, {
     style: function(feature) {
+    console.log(feature.properties); // ★★★デバッグ用：ここで各国のプロパティ情報を出力
     const countryNameRaw = feature?.properties?.name;
 
     const countryName = typeof countryNameRaw === 'string' ? countryNameRaw.trim().toLowerCase() : "";

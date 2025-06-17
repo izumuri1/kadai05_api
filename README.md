@@ -5,7 +5,7 @@ World Travel Record　
 - 海外旅行で行ったことのある国を記録する
 
 ## ③アプリのデプロイURL
-
+https://izumuri1.github.io/kadai05_api/
 
 ## ④アプリのログイン用IDまたはPassword（ある場合）
 - ID: なし

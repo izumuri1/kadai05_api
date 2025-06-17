@@ -15,68 +15,64 @@
 
 <!-- タイトル -->
 <header>
-    <div>
+    <div class="sticky">
         <h1>World Travel Record</h1>
     </div>
 </header>
 
 
 <!-- 地図 -->
-<main>
+<div class="sticky">
     <div id="map" style="height: 300px; margin-bottom: 20px; box-shadow: 5px 2px 2px rgba(128, 128, 128, 0.368);">
         <!-- ここに地図を表示 -->
     </div>
-</main>
+</div>
 
 
 <div>
-    <!-- 旅行レコード -->
-    <main>
-        <!-- 基礎情報：旅行先、同行者 -->
-        <div class="recordBlock">
-            <div>
-                <input id="country" type="text" placeholder="旅行した国">
-            </div>
-            <div>
-                <input id="travelBuddy" type="text" placeholder="同行者">
-            </div>
-        </div>
-        <!-- 旅行時期 -->
-        <div class="recordBlock">
-            <div>
-                <label for="departureDate">出発日</label>
-                <div>
-                    <input type="date" id="departureDate">
-                </div>
-            </div>
-            <div>
-                <label for="returnDate">帰国日</label>
-                <div>
-                    <input type="date" id="returnDate">
-                </div>
-            </div>
-        </div>
-        <!-- 詳細 -->
-        <div class="recordBlock">
-            <div>
-                <textarea name="" id="activity" placeholder="何をしたか"></textarea>
-            </div>
-            <div>
-                <textarea name="" id="review" placeholder="感想"></textarea>
-            </div>
-        </div>
-        <!-- レコード登録ボタン -->
+<!-- 旅行レコード -->
+    <!-- 基礎情報：旅行先、同行者 -->
+    <div class="recordBlock">
         <div>
-            <button id="register">登録</button>
+            <input id="country" type="text" placeholder="旅行した国">
         </div>
-    </main>
+        <div>
+            <input id="travelBuddy" type="text" placeholder="同行者">
+        </div>
+    </div>
+    <!-- 旅行時期 -->
+    <div class="recordBlock">
+        <div>
+            <label for="departureDate">出発日</label>
+            <div>
+                <input type="date" id="departureDate">
+            </div>
+        </div>
+        <div>
+            <label for="returnDate">帰国日</label>
+            <div>
+                <input type="date" id="returnDate">
+            </div>
+        </div>
+    </div>
+    <!-- 詳細 -->
+    <div class="recordBlock">
+        <div>
+            <textarea name="" id="activity" placeholder="何をしたか"></textarea>
+        </div>
+        <div>
+            <textarea name="" id="review" placeholder="感想"></textarea>
+        </div>
+    </div>
+    <!-- レコード登録ボタン -->
+    <div>
+        <button id="register">登録</button>
+    </div>
 
     <!-- レコード一覧表示 -->
-    <main>
-        <div class="recordList">
-            <!-- ここに登録したレコードを一覧で表示 -->
-        </div>
-    </main>
+    <div class="recordList">
+        <!-- ここに登録したレコードを一覧で表示 -->
+    </div>
 
 
     <footer>&copy; 2025 izumuri<br>
