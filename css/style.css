@@ -15,10 +15,12 @@ body {
 
 h1 {
   text-align: center;
-  margin: 10px 0;
+  margin: 0;
   font-size: 20px;
   font-family: "Montserrat", sans-serif;
   font-style:italic;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 footer {

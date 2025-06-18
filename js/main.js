@@ -61,13 +61,11 @@ $("#register").on("click", async function () {
     $("#review").val("");
 });
 
-
-
 // (2)JSの内部管理上のデータ登録
 // recordListに既往recordを再読み込み
 let records = []; // recordの一覧を保存する配列
 
-onChildAdded(recordRef, function (data) {
+onChildAdded(recordRef, async function (data) {
     const record = data.val();
     const key = data.key;
 
@@ -89,11 +87,10 @@ onChildAdded(recordRef, function (data) {
     // 期限順にソート（昇順: 古い日付が上）
     records.sort((a, b) => new Date(a.departureDate) - new Date(b.departureDate));
 
-    // (3)HTML上へのデータ表示
-    // ◇表示を更新（関数は後述）
+    // (3)HTML上へのデータ表示（関数は後述）
     renderRecords();
 
-    // (4)地図への色塗り（すべての読み込みが終わったあとに1度だけ実行）
+    // (4)地図への色塗り（関数は後述）
     if (!geojsonLoaded) {
         geojsonLoaded = true;
         drawCountriesWithVisit(); // ← この中で GeoJSON を読み込んで塗り分け
@@ -164,7 +161,7 @@ $(document).on("click", ".renew", function () {
 
 // (2)JSの内部管理上のデータ更新
 // FB内のrecordRefを監視し、データ更新があれば発火し、変更後のデータ（data.val()）がJSに渡される
-onChildChanged(recordRef, function (data) {
+onChildChanged(recordRef, async function (data) {
     const updated = data.val();
     const key = data.key;
 
@@ -214,8 +211,8 @@ $(document).on("click", ".delete", async function () {
         records = records.filter(record => record.key !== key);
         
         // (3)表示更新
-        // 表示を更新 (await で表示処理完了を待って、次の処理へ進む)
-        await renderRecords();
+        // 表示を更新 
+        renderRecords();
 
     } catch (error) {
         console.error("❌ 削除エラー:", error);
@@ -238,9 +235,7 @@ function drawCountriesWithVisit() {
     style: function(feature) {
     console.log(feature.properties); // ★★★デバッグ用：ここで各国のプロパティ情報を出力
     const countryNameRaw = feature?.properties?.name;
-
     const countryName = typeof countryNameRaw === 'string' ? countryNameRaw.trim().toLowerCase() : "";
-
     const visited = records.some(record => {
         const recCountry = typeof record.country === 'string' ? record.country.trim().toLowerCase() : "";
         return recCountry === countryName;
@@ -260,8 +255,31 @@ function drawCountriesWithVisit() {
 
 // 5⃣ 旅行先（国）へ地図を移動する（showオンクリック）
 // recordCountry.val()を取得し、国名に基づき、該当国へ移動する
+// Showボタンクリック時の処理
+$(document).on("click", ".show", function () {
+    const countryName = $(this).closest(".recordKey").find(".recordCountry").val().trim().toLowerCase();
+    if (!countryName) return;
 
+    // GeoJSONを再度取得
+    fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+        .then(response => response.json())
+        .then(geojson => {
+            // 国名一致するfeatureを探す
+            const targetFeature = geojson.features.find(feature => {
+                const featureName = (feature.properties?.name || '').trim().toLowerCase();
+                return featureName === countryName;
+            });
+            if (!targetFeature) {
+                alert('該当する国が見つかりませんでした');
+                return;
+            }
 
+            // LeafletのL.geoJSONを使ってboundsを取得
+            const layer = L.geoJSON(targetFeature);
+            map.fitBounds(layer.getBounds());
+        })
+        .catch(error => console.error(error));
+});
 
 
 // （チャレンジ）6⃣ 旅行先（国）にピンを立て、ピンをクリックするとrecordをウィンドウ表示する
