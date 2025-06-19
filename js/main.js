@@ -4,6 +4,7 @@ const map = L.map('map').setView([20, 0], 2);
     console.log(map,"地図情報を確認");
 
 
+
 /****************************************************
 Firebase設定
 ****************************************************/
@@ -13,16 +14,18 @@ import { getDatabase, ref, push, set, onChildAdded, remove, onChildRemoved, upda
     from "https://www.gstatic.com/firebasejs/9.1.0/firebase-database.js";
 import firebaseConfig from "../firebaseConfig.js";  // コンフィグをインポート！
 
-// Firebaseを初期化　★要対応！！！！！
+// Firebaseを初期化
 const app = initializeApp(firebaseConfig);          //各種設定をappに格納
 const db = getDatabase(app);                        //各種設定（app）をdbに適用することで、RealtimeDBに接続
 const recordRef = ref(db, "memo/record");           //record (memo/record)のデータ参照先を設定
-// // const ***Ref = ref(db, "memo/***");               // ***(memo/***) のデータ参照先を設定
+
+
 
 
 /****************************************************
 関数等
 ****************************************************/
+/////////////////////////////////////////////////////
 // 1⃣ #register.onclick　➡　(1)FBへデータ登録／(2)JSの内部管理上のデータ登録／(3)HTML上へのデータ表示／(4)地図への色塗り
 // (1)FBへデータ登録
 $("#register").on("click", async function () {
@@ -43,14 +46,17 @@ $("#register").on("click", async function () {
 
     //set() を使い、FBにID付のrecordを送信
     //newPostRef は push() で作られた場所なので、そこにrecordを書き込む。
-    await set(newPostRef, record); // Firebase登録
+    await set(newPostRef, record);
 
+    // (2)JSの内部管理上のデータ登録　★★★★★後段とダブっていて削除すべきなんだろうけど...
     // 👇 records に即反映
     records.push({ key: newPostRef.key, ...record });
     records.sort((a, b) => new Date(a.departureDate) - new Date(b.departureDate));
 
+    // (3)HTML上へのデータ表示　★★★★★後段とダブっていて削除すべきなんだろうけど...
     renderRecords();
-    drawCountriesWithVisit(); // ← ここで色を反映！
+    // (4)地図への色塗り　★★★★★後段とダブっていて削除すべきなんだろうけど...
+    drawCountriesWithVisit();
 
     // 入力リセット
     $("#country").val("");
@@ -62,16 +68,12 @@ $("#register").on("click", async function () {
 });
 
 // (2)JSの内部管理上のデータ登録
-// recordListに既往recordを再読み込み
 let records = []; // recordの一覧を保存する配列
 
+// FB内のrecordRefを監視し、データ登録があれば発火し、登録されたデータ（data.val()）がJSに渡される
 onChildAdded(recordRef, async function (data) {
     const record = data.val();
     const key = data.key;
-
-    // ✅ records に同じ key のデータがすでに存在していればスキップ（重複防止）
-    const alreadyExists = records.some(r => r.key === key);
-    if (alreadyExists) return;
 
     // 取得したデータを配列に追加
     records.push({
@@ -97,6 +99,10 @@ onChildAdded(recordRef, async function (data) {
     }
 });
 
+
+
+
+/////////////////////////////////////////////////////
 // ◇【共通関数：recordList表示更新】➡recordListを画面更新する
 function renderRecords() {
     $(".recordList").empty(); // 画面の既存recordListをクリア
@@ -129,6 +135,47 @@ function renderRecords() {
 }
 
 
+
+
+/////////////////////////////////////////////////////
+// ◇【共通関数：訪問した国を塗りつぶす】
+// recordCountry.val()を取得し、国名に基づき、該当国を塗りつぶす
+let geojsonLoaded = false;
+
+function drawCountriesWithVisit() {
+    fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
+        .then(response => response.json())
+        // 地図にGeoJsonを描画する
+        .then(geojson => {
+    // L.geoJSON()は、Leaflet.js の関数で、地理データを地図上にポリゴンとして描画
+    L.geoJSON(geojson, {
+    // style: function(feature){} で、ポリゴン（国ごと）の見た目（色や線など）を指定
+    style: function(feature) {
+    console.log(feature.properties); // ★★★デバッグ用：ここで各国のプロパティ情報を出力
+    const countryNameRaw = feature?.properties?.name;
+    const countryName = typeof countryNameRaw === 'string' ? countryNameRaw.trim().toLowerCase() : "";
+    const visited = records.some(record => {
+        const recCountry = typeof record.country === 'string' ? record.country.trim().toLowerCase() : "";
+        return recCountry === countryName;
+    });
+
+    return {
+        color: "#3388ff",
+        weight: 1,
+        fillOpacity: visited ? 0.6 : 0.1,
+        fillColor: visited ? "#ffc107" : "#ffffff"
+    };
+    }
+        // 上記処理の結果を地図に追加
+        }).addTo(map);
+    });
+}
+
+
+
+
+
+/////////////////////////////////////////////////////
 // 2⃣ .renew.onclick　➡　(1)FBへデータ更新／(2)JSの内部管理上のデータ更新／(3)HTML上へのデータ表示／(4)地図色塗り
 // (1)FBへデータ更新
 $(document).on("click", ".renew", function () {
@@ -190,6 +237,10 @@ onChildChanged(recordRef, async function (data) {
 });
 
 
+
+
+
+/////////////////////////////////////////////////////
 // 3⃣ .delete.onclick　➡　(1)FBのデータ削除／(2)JSの内部管理上のデータ削除／(3)HTML上の表示削除
 $(document).on("click", ".delete", async function () {
 
@@ -223,41 +274,18 @@ $(document).on("click", ".delete", async function () {
 });
 
 
-// 4⃣ 旅行先（国）を塗りつぶす
-// recordCountry.val()を取得し、国名に基づき、該当国を塗りつぶす
-let geojsonLoaded = false;
-
-function drawCountriesWithVisit() {
-    fetch('https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson')
-        .then(response => response.json())
-        .then(geojson => {
-    L.geoJSON(geojson, {
-    style: function(feature) {
-    console.log(feature.properties); // ★★★デバッグ用：ここで各国のプロパティ情報を出力
-    const countryNameRaw = feature?.properties?.name;
-    const countryName = typeof countryNameRaw === 'string' ? countryNameRaw.trim().toLowerCase() : "";
-    const visited = records.some(record => {
-        const recCountry = typeof record.country === 'string' ? record.country.trim().toLowerCase() : "";
-        return recCountry === countryName;
-    });
-
-    return {
-        color: "#3388ff",
-        weight: 1,
-        fillOpacity: visited ? 0.6 : 0.1,
-        fillColor: visited ? "#ffc107" : "#ffffff"
-    };
-    }
-        }).addTo(map);
-    });
-}
 
 
-// 5⃣ 旅行先（国）へ地図を移動する（showオンクリック）
+
+
+/////////////////////////////////////////////////////
+// 4⃣ 旅行先（国）へ地図を移動する（showオンクリック）
 // recordCountry.val()を取得し、国名に基づき、該当国へ移動する
 // Showボタンクリック時の処理
 $(document).on("click", ".show", function () {
     const countryName = $(this).closest(".recordKey").find(".recordCountry").val().trim().toLowerCase();
+
+    // ガード句（guard clause）で、異常・想定外な値だったら処理を抜ける
     if (!countryName) return;
 
     // GeoJSONを再度取得
@@ -274,14 +302,17 @@ $(document).on("click", ".show", function () {
                 return;
             }
 
-            // LeafletのL.geoJSONを使ってboundsを取得
+            // LeafletのL.geoJSONを使って対象国のポリゴン範囲を取得
             const layer = L.geoJSON(targetFeature);
+            // map.fitBounds() で、その国にズームイン
             map.fitBounds(layer.getBounds());
         })
         .catch(error => console.error(error));
 });
 
 
-// （チャレンジ）6⃣ 旅行先（国）にピンを立て、ピンをクリックするとrecordをウィンドウ表示する
 
 
+
+/////////////////////////////////////////////////////
+// （チャレンジ）5⃣ 旅行先（国）にピンを立て、ピンをクリックするとrecordをウィンドウ表示する
